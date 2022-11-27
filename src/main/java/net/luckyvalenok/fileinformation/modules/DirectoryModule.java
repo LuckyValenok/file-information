@@ -13,7 +13,7 @@ public class DirectoryModule extends Module {
     
     @Override
     public String getDescription() {
-        return "files - Список файлов\n" + "size - Размер всех файлов\n" + "";
+        return "files - Список файлов\n" + "size - Размер всех файлов\n" + "count - количество файлов";
     }
     
     @Override
@@ -25,7 +25,8 @@ public class DirectoryModule extends Module {
             case "size":
                 printSize(file);
                 break;
-            case "":
+            case "count":
+                printCount(file);
                 break;
         }
     }
@@ -50,5 +51,14 @@ public class DirectoryModule extends Module {
             totalSize += ((double) curFile.length()) / 1024;
         }
         System.out.println(String.format("%.2f", totalSize) + " KB");
+    }
+    
+    private void printCount(File directory) {
+        File[] files = directory.listFiles();
+        if (files == null) {
+            return;
+        }
+        
+        System.out.println(files.length);
     }
 }

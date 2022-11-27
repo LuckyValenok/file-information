@@ -8,6 +8,7 @@ import com.drew.metadata.Tag;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class ImageModule extends Module {
     
     @Override
     public String getDescription() {
-        return "size - Вывод размера файла\n" + "exif - Вывод информации exif\n" + "";
+        return "size - Вывод размера файла\n" + "exif - Вывод информации exif\n" + "invisible - Вывод количества невидимых пикселей";
     }
     
     @Override
@@ -34,7 +35,8 @@ public class ImageModule extends Module {
             case "exif":
                 printExif(file);
                 break;
-            case "":
+            case "invisible":
+                printInvisiblePixels(file);
                 break;
         }
     }
@@ -59,6 +61,26 @@ public class ImageModule extends Module {
                 }
             }
         } catch (IOException | ImageProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private void printInvisiblePixels(File file) {
+        try {
+            BufferedImage image = ImageIO.read(file);
+            int amount = 0;
+            
+            for (int x = 0; x < image.getWidth(); x++) {
+                for (int y = 0; y < image.getHeight(); y++) {
+                    Color color = new Color(image.getRGB(x, y), true);
+                    if (color.getAlpha() == 0) {
+                        amount += 1;
+                    }
+                }
+            }
+            
+            System.out.println(amount);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
